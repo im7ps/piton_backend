@@ -7,20 +7,9 @@ from models import Houses, Squares, Cities
 from database import SessionLocal
 from .auth import get_current_user
 import houses_utils
+from services import get_db, create_router
 
-
-router = APIRouter(
-    prefix='/houses',
-    tags=['houses']
-)
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+router = create_router(prefix='/houses', tags=['houses'])
 
 
 db_dependency = Annotated[Session, Depends(get_db)]

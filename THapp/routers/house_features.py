@@ -6,21 +6,9 @@ from starlette import status
 from models import Houses
 from database import SessionLocal
 from .auth import get_current_user
+from services import get_db, create_router
 
-
-router = APIRouter(
-    prefix='/features',
-    tags=['features']
-)
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
+router = create_router(prefix='/features', tags=['features'])
 
 db_dependency = Annotated[Session, Depends(get_db)]
 user_dependency = Annotated[dict, Depends(get_current_user)]

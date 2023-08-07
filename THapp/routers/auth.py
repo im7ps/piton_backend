@@ -9,14 +9,15 @@ from models import Users
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from jose import jwt, JWTError
+from services import get_db, create_router
+from auth_utils import verify_email
 
-router = APIRouter(
-    prefix='/auth',
-    tags=['auth']
-)
+router = create_router(prefix='/auth', tags=['auth'])
+
 
 SECRET_KEY = '197b2c37c391bed93fe80344fe73b806947a65e36206e05a1a23c2fa12702fe3'
 ALGORITHM = 'HS256'
+
 
 bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/token')
@@ -34,14 +35,6 @@ class CreateUserRequest(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 db_dependency = Annotated[Session, Depends(get_db)]
@@ -80,6 +73,11 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_user(db: db_dependency,
                       create_user_request: CreateUserRequest):
+    #da inserire verifica email non ancora in uso
+    try:
+        verify_email(db, create_user_request.email)
+    except:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Email not valid.')
     create_user_model = Users(
         email=create_user_request.email,
         username=create_user_request.username,

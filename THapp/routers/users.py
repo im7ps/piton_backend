@@ -7,19 +7,9 @@ from models import Users
 from database import SessionLocal
 from .auth import get_current_user
 from passlib.context import CryptContext
+from services import get_db, create_router
 
-router = APIRouter(
-    prefix='/user',
-    tags=['user']
-)
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+router = create_router(prefix='/users', tags=['users'])
 
 
 db_dependency = Annotated[Session, Depends(get_db)]

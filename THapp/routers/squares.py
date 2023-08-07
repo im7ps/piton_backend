@@ -7,20 +7,9 @@ from database import SessionLocal
 from .auth import get_current_user
 from pydantic import BaseModel, Field
 import squares_utils
+from services import get_db, create_router
 
-
-router = APIRouter(
-    prefix='/squares',
-    tags=['squares']
-)
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+router = create_router(prefix='/squares', tags=['squares'])
 
 
 db_dependency = Annotated[Session, Depends(get_db)]
