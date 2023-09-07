@@ -3,7 +3,7 @@ from database import SessionLocal
 
 def create_router(prefix: str, tags: list):
     return APIRouter(
-        prefix=prefix,
+        prefix= '/api'+ prefix,
         tags=tags
     )
 
